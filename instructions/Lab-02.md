@@ -121,23 +121,23 @@ Azure に移行するデータを含む既存の MySQL データベースを持�
 
     ```text
     Querying AdventureWorks database
-    SELECT COUNT(*) FROM production.vproductanddescription
-    1764
+    SELECT COUNT(*) FROM product
+    504
 
-    SELECT COUNT(*) FROM purchasing.vendor
+    SELECT COUNT(*) FROM vendor
     104
 
-    SELECT COUNT(*) FROM sales.specialoffer
+    SELECT COUNT(*) FROM specialoffer
     16
 
-    SELECT COUNT(*) FROM sales.salesorderheader
+    SELECT COUNT(*) FROM salesorderheader
     31465
 
-    SELECT COUNT(*) FROM sales.salesorderdetail
+    SELECT COUNT(*) FROM salesorderdetail
     121317
 
-    SELECT COUNT(*) FROM person.person
-    19972
+    SELECT COUNT(*) FROM customer
+    19185
     ```
 
 ### タスク 3: データベースを Azure 仮想マシンにオフラインで移行する
@@ -208,10 +208,10 @@ adventureworks データベース内のデータについて理解したら、�
 
     このクエリが 16 行を返していることを確認します。これは、オンプレミス データベース内の行数と同じです。
 
-1. *sales.vendor* テーブルの行数を照会します。
+1. *vendor* テーブルの行数を照会します。
 
     ```SQL
-    SELECT COUNT(*) FROM sales.vendor;
+    SELECT COUNT(*) FROM vendor;
     ```
 
     このテーブルは 104 行含まれている必要があります。
@@ -230,9 +230,9 @@ adventureworks データベース内のデータについて理解したら、�
     | ユーザー名 | azureuser |
     | 既定のスキーマ | adventureworks |
 
-1. 「**パスワード**」 に **Pa55w.rd** と入力 し、「**OK**」 をクリックします。 
+1. パスワード プロンプトで、**Pa55w.rd** と入力し、「**OK**] をクリックします。 
 1. 「**OK**」 を クリックし、「**閉じる**」 をクリックします。
-1. **MySQL on Azure** をクリックします。
+1. 「**データベース**] メニューの 「**データベースに接続**] をクリックし、「**Azure でMySQL**] を選択して、 「**OK**] をクリックします。
 1. **adventureworks** では、データベース内のテーブルを参照します。  テーブルは、オンプレミス データベースのテーブルと同じである必要があります。
 
 ### タスク 3: Azure 仮想マシンのデータベースに対してサンプル アプリケーションを再構成してテストする。
@@ -549,7 +549,7 @@ adventureworks データベース内のデータについて理解したら、�
 
 1. **quit** コマンドを使用して *mysql* ユーティリティーを閉 じます。
 
-### タスク 3: Azure Database for MySQL のデータベースを確認する
+### タスク 6: Azure Database for MySQL のデータベースを確認する
 
 1. オンプレミス コンピュータとして機能する仮想マシンに戻る
 
@@ -567,19 +567,19 @@ adventureworks データベース内のデータについて理解したら、�
 
 1. **データベース** を展開し、**adventureworks** を展開 し、データベース内のテーブルを参照します。テーブルは、オンプレミス データベースのテーブルと同じである必要があります。
 
-### タスク 3: Azure Database for MySQL のデータベースに対してサンプル アプリケーションを再構成してテストする
+### タスク 7: Azure Database for MySQL のデータベースに対してサンプル アプリケーションを再構成してテストする
 
-1. **ターミナル** ウィンドウに戻 ります。 
-1. *code/mysql/AdventureWorksQueries* フォルダーに移動します。
+1. **LON-DEV-01** 仮想マシンの 「**ターミナル**] ウィンドウに戻ります。 
+1. *workshop/migration_samples/code/mysql/AdventureWorksQueries* フォルダーに移動します。
 
    ```bash
-   cd code/mysql/AdventureWorksQueries
+   cd ~/workshop/migration_samples/code/mysql/AdventureWorksQueries
    ```
 
-1. コード エディタを使用して App.config ファイルを開きます。
+1. ナノ エディタを使用して App.config ファイルを開きます。
 
     ```bash
-    code App.config
+    nano App.config
     ```
 
 1. **ConnectionString** 設定の値を変更し、Azure 仮想マシンの IP アドレスを **adventureworks[nnn].MySQL.database.azure.com** に置き換えます。**ユーザー ID** を **awadmin@adventureworks[nnn]** に変更します。**パスワード** を **「Pa55w.rdDemo」** に変更します。ファイルは次のようになります。
@@ -588,12 +588,12 @@ adventureworks データベース内のデータについて理解したら、�
     <?xml version="1.0" encoding="utf-8" ?>
         <configuration>
           <appSettings>
-            <add key="ConnectionString" value="Server=adventureworks[nnn].MySQL.database.azure.com;Database=adventureworks;Port=3306;User Id=awadmin@adventureworks[nnn];Password=Pa55w.rdDemo" />
+            <add key="ConnectionString" value="Server=adventureworks[nnn].MySQL.database.azure.com;database=adventureworks;port=3306;uid=awadmin@adventureworks[nnn];password=Pa55w.rdDemo" />
           </appSettings>
         </configuration>
     ```
 
-    これで、アプリケーションは Azure 仮想マシンで実行されているデータベースに接続するはずです。
+    アプリケーションは、Azure Database for MySQL で実行されているデータベースに接続されるはずです。
 
 1. ファイルを保存し、エディタを閉じます。
 
@@ -602,5 +602,6 @@ adventureworks データベース内のデータについて理解したら、�
     ```bash
     dotnet run
     ```
+   アプリは、Azure で実行されているデータベースからデータを取得する点を除いて、以前と同じ結果を表示する必要があります。
 
    これで、データベースが Azure Database for MySQL に移行され、新しいデータベースを使用するようにアプリケーションが再構成されました。
